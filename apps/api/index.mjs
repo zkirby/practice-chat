@@ -30,7 +30,7 @@ const initLlama = async () => {
 
 let context, session;
 
-const stream = async (prompt, onNext, onDone) => {
+const stream = async (prompt, onNext) => {
   if (!session) {
     const llama = await initLlama();
     context = llama.context;
@@ -39,9 +39,6 @@ const stream = async (prompt, onNext, onDone) => {
   session.prompt(prompt, {
     onToken(chunk) {
       onNext(context.decode(chunk));
-    },
-    onEnd() {
-      onDone();
     },
   });
 };
@@ -57,9 +54,8 @@ wsServer.on("connection", (socket) => {
   socket.on("message", async (message) => {
     const prompt = message.toString();
     console.log({ prompt });
-    await stream(prompt, socket.send.bind(socket), () =>
-      socket.send("[STOP MESSAGE]")
-    );
+    socket.send("[START MESSAGE]");
+    await stream(prompt, socket.send.bind(socket));
   });
 });
 

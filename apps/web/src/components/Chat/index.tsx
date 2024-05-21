@@ -1,11 +1,16 @@
+import "./Chat.css";
+
 export default function Chat({ messages, send }) {
   return (
-    <div>
-      {messages.map((m) => (
-        <div>{m}</div>
-      ))}
+    <div className="chat-body__wrapper">
+      <div className="chat-body__message-wrapper">
+        {messages.map((m) => (
+          <div className={"chat-body__message " + m.role}>{m.content}</div>
+        ))}
+      </div>
 
       <form
+        className="chat-body__form"
         onSubmit={(e) => {
           e.preventDefault();
 

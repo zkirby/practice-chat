@@ -1,15 +1,18 @@
 import { useEffect, useRef, useState } from "react";
-import "./App.css";
+
 import Chat from "./components/Chat";
 import HeaderBar from "./components/HeaderBar";
 import Threads from "./components/Threads";
 
+import "./App.css";
+
 function App() {
   const ws = useRef<WebSocket | null>(null);
 
-  const [messages, setMessages] = useState<string[]>([]);
+  const [messages, setMessages] = useState<{ role: string; content: string }[]>(
+    []
+  );
   const [loading, setLoading] = useState(true);
-  const messsageId = useRef(0);
 
   useEffect(() => {
     const socket = new WebSocket("ws://127.0.0.1:5001");
@@ -22,13 +25,16 @@ function App() {
     // Listen for messages
     socket.addEventListener("message", (event) => {
       const message = event.data;
-      if (message === "[STOP MESSAGE]") {
-        messsageId.current += 1;
+      if (message === "[START MESSAGE]") {
+        setMessages((msgs) => [...msgs, { role: "ai", content: "" }]);
       } else {
-        const idx = messsageId.current;
         setMessages((msgs) => {
-          if (idx >= msgs.length) return msgs.concat(message);
-          return msgs.with(idx, msgs[idx] + message);
+          const newMsgs = [...msgs];
+          const lastMsg = newMsgs[newMsgs.length - 1];
+          return newMsgs.with(newMsgs.length - 1, {
+            role: "ai",
+            content: lastMsg.content + message,
+          });
         });
       }
     });
@@ -39,8 +45,7 @@ function App() {
   }, []);
 
   const send = (prompt: string) => {
-    setMessages([...messages, `>>> ${prompt}`]);
-    messsageId.current += 1;
+    setMessages([...messages, { role: "user", content: prompt }]);
     ws.current?.send(prompt);
   };
 

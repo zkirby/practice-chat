@@ -1,3 +1,22 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+.chat__wrapper {
+  height: 100%;
+  width: 100%;
+}
+
 .chat__content {
   display: flex;
+  height: 100%;
 }

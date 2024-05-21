@@ -1,0 +1,5 @@
+.threads__wrapper {
+    height: 100%;
+    max-width: 400px;
+    border-right: 1px solid black;
+}

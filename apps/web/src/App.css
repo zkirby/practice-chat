@@ -6,17 +6,29 @@
 
 html,
 body,
-#root {
-  height: 100%;
-  width: 100%;
-}
-
+#root, 
 .chat__wrapper {
   height: 100%;
   width: 100%;
 }
 
+.chat__spinner {
+  height: 4px;
+  width: 60px;
+  background: linear-gradient(black, lightgray);
+  animation: spin 2s linear forwards;
+}
+
 .chat__content {
   display: flex;
   height: 100%;
+}
+
+@keyframes spin {
+  from {
+    transform: rotateZ(0deg);
+  } 
+  to {
+    transform: rotateZ(360deg);
+  }
 }

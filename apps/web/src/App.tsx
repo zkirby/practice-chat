@@ -1,66 +1,58 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 
 import Chat from "./components/Chat";
-import HeaderBar from "./components/HeaderBar";
 import Threads from "./components/Threads";
 
 import "./App.css";
+import useWebsocket from "./hooks/useWebsocket";
+import { Message } from "./types";
 
-function App() {
-  const ws = useRef<WebSocket | null>(null);
-
-  const [messages, setMessages] = useState<{ role: string; content: string }[]>(
-    []
-  );
+export default function App() {
+  const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const socket = new WebSocket("ws://127.0.0.1:5001");
-
-    // Connection opened
-    socket.addEventListener("open", () => {
-      setLoading(false);
-    });
-
-    // Listen for messages
-    socket.addEventListener("message", (event) => {
+  const [send] = useWebsocket("ws://127.0.0.1:5001", {
+    onOpen: () => setLoading(false),
+    onMessage: (event) => {
       const message = event.data;
       if (message === "[START MESSAGE]") {
-        setMessages((msgs) => [...msgs, { role: "ai", content: "" }]);
+        setMessages((msgs) => [
+          ...msgs,
+          { role: "ai", content: "", sentAt: new Date() },
+        ]);
       } else {
         setMessages((msgs) => {
-          const newMsgs = [...msgs];
-          const lastMsg = newMsgs[newMsgs.length - 1];
-          return newMsgs.with(newMsgs.length - 1, {
+          const lastIdx = msgs.length - 1;
+          return msgs.with(lastIdx, {
             role: "ai",
-            content: lastMsg.content + message,
+            content: msgs[lastIdx].content + message,
           });
         });
       }
-    });
+    },
+  });
 
-    ws.current = socket;
-
-    return () => ws.current?.close();
-  }, []);
-
-  const send = (prompt: string) => {
-    setMessages([...messages, { role: "user", content: prompt }]);
-    ws.current?.send(prompt);
-  };
-
-  if (loading) return <div>loading...</div>;
+  const sendPrompt = useCallback(
+    (prompt: string) => {
+      setMessages([
+        ...messages,
+        { role: "user", content: prompt, sentAt: new Date() },
+      ]);
+      send?.(prompt);
+    },
+    [messages, send]
+  );
 
   return (
     <div className="chat__wrapper">
-      <HeaderBar />
-
-      <div className="chat__content">
-        <Threads />
-        <Chat messages={messages} send={send} />
-      </div>
+      {loading ? (
+        <div className="chat__spinner" />
+      ) : (
+        <div className="chat__content">
+          <Threads />
+          <Chat messages={messages} send={sendPrompt} />
+        </div>
+      )}
     </div>
   );
 }
-
-export default App;

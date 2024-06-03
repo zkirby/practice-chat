@@ -43,6 +43,9 @@ const wss = new WebSocketServer({ noServer: true });
 let _id = 0;
 let _clients = [];
 
+const broadcast = (message) =>
+  _clients.forEach((s) => s.send(JSON.stringify(message)));
+
 wss.on("connection", (socket) => {
   _clients.push(socket);
   socket.on("message", async (payload) => {
@@ -51,27 +54,19 @@ wss.on("connection", (socket) => {
 
     console.log({ prompt });
 
-    _clients.forEach((s) =>
-      s.send(
-        JSON.stringify({
-          user: { id, role: "human" },
-          content: { id: ++_id, text: message },
-          sentAt: new Date().toISOString(),
-        })
-      )
-    );
+    broadcast({
+      user: { id, role: "human" },
+      content: { id: ++_id, text: message },
+      sentAt: new Date().toISOString(),
+    });
 
     const cid = ++_id;
     const sentAt = new Date().toISOString();
     await stream(message, (chunk) => {
-      _clients.forEach((s) => {
-        s.send(
-          JSON.stringify({
-            user: { id: 1000, role: "ai" },
-            content: { id: cid, fragment: chunk },
-            sentAt,
-          })
-        );
+      broadcast({
+        user: { id: 1000, role: "ai" },
+        content: { id: cid, fragment: chunk },
+        sentAt,
       });
     });
   });

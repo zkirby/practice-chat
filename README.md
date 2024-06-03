@@ -8,6 +8,11 @@
 
 ### Resources
 
+- https://ably.com/blog/websockets-vs-http-streaming-vs-sse
+- https://www.linkedin.com/blog/engineering/archive/instant-messaging-at-linkedin-scaling-to-hundreds-of-thousands-#:~:text=Server%2Dsent%20events%20(SSE),client%20to%20make%20subsequent%20requests.
+- https://ably.com/blog/chat-app-architecture
+- https://ably.com/blog/what-it-takes-to-build-a-realtime-chat-or-messaging-app
+
 - https://ably.com/topic/server-sent-events
 - https://ably.com/topic/the-challenge-of-scaling-websockets
 - https://ably.com/topic/websocket-security
@@ -15,3 +20,21 @@
 - https://ably.com/blog/websockets-react-tutorial
 
 * SSE for online notifs =>
+
+[Should you use SSE for chat](https://ably.com/topic/server-sent-events):
+"Long story short, we do not recommend that you use SSE for your chat experience.
+
+This could be a little bit surprising since, earlier in this post, we referenced a retrospective by LinkedIn where the team describes adapting SSE for chat. It’s worth pointing out that, in the same post, they say:
+"
+“WebSockets is a much more powerful technology to perform bi-directional, full-duplex communication, and we will be upgrading to that as the protocol of choice when possible.”
+
+--
+https://ably.com/topic/the-challenge-of-scaling-websockets#web-socket-fallback-strategy
+
+"There’s a moderate overhead in establishing a new WebSocket connection — the process involves a non-trivial request/response pair between the client and the server, known as the opening handshake. Imagine tens of thousands or millions of client devices trying to open WebSocket connections simultaneously. Such a scenario leads to a massive burst in traffic"
+
+"You must consider a backoff mechanism to prevent rejected clients from attempting to reconnect immediately; this would just put your system under more pressure."
+
+"You might also consider dropping existing connections to reduce the load on your system; for example, the idle ones (which, even though idle, are still consuming resources due to heartbeats). "
+
+Best strategy for reconnect is exponential backoff w/ jitter

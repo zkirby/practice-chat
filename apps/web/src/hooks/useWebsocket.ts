@@ -11,6 +11,12 @@ enum ReadyState {
 
 type WebsocketMessage = string | ArrayBufferLike | Blob | ArrayBufferView;
 
+const UserIdBrand = Symbol("ws:UserId");
+const ContentIdBrand = Symbol("ws:ContentId");
+
+type UserId = { __brand: typeof UserIdBrand };
+type ContentId = { __brand: typeof ContentIdBrand };
+
 type FragmentPayload = {
   /** id of the message that this fragment belongs to */
   id: string;
@@ -19,7 +25,7 @@ type FragmentPayload = {
 };
 type FullTextPayload = {
   /** id of the message*/
-  id: string;
+  id: UserId;
   /** the entire message text if this ws contains this text */
   text: string;
 };
@@ -27,7 +33,7 @@ type FullTextPayload = {
 export type MessagePayload = {
   user: {
     /** id of the user that sent this message  */
-    id: string;
+    id: ContentId;
     /** role of the user that sent this message */
     role: "ai" | "human";
   };

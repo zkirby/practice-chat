@@ -23,7 +23,7 @@ function Message({ id, role, text }: Pick<UIMessage, "role" | "text" | "id">) {
         backgroundColor: _color.get(id).bg ?? "blue",
       }}
     >
-      {id}:{text}
+      {id as unknown as string}:{text}
     </pre>
   );
 }

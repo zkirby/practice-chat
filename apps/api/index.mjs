@@ -28,8 +28,56 @@ const initLlama = async () => {
   return { context, session };
 };
 
-let context, session;
+const port = process.env.PORT || 5001;
+const app = express();
 
+app.use(cors());
+
+// ---------------------------------------
+// ------- HTTP Server -------------------
+
+// ---------------------------------------
+// ------- Websocket ---------------------
+const wss = new WebSocketServer({ noServer: true });
+
+let _id = 0;
+let _clients = [];
+
+wss.on("connection", (socket) => {
+  _clients.push(socket);
+  socket.on("message", async (payload) => {
+    const prompt = payload.toString();
+    const { id, message } = JSON.parse(prompt);
+
+    console.log({ prompt });
+
+    _clients.forEach((s) =>
+      s.send(
+        JSON.stringify({
+          user: { id, role: "human" },
+          content: { id: ++_id, text: message },
+          sentAt: new Date().toISOString(),
+        })
+      )
+    );
+
+    const cid = ++_id;
+    const sentAt = new Date().toISOString();
+    await stream(message, (chunk) => {
+      _clients.forEach((s) => {
+        s.send(
+          JSON.stringify({
+            user: { id: 1000, role: "ai" },
+            content: { id: cid, fragment: chunk },
+            sentAt,
+          })
+        );
+      });
+    });
+  });
+});
+
+let context, session;
 const stream = async (prompt, onNext) => {
   if (!session) {
     const llama = await initLlama();
@@ -43,26 +91,10 @@ const stream = async (prompt, onNext) => {
   });
 };
 
-const port = process.env.PORT || 5001;
-const app = express();
-
-app.use(cors());
-
-const wsServer = new WebSocketServer({ noServer: true });
-
-wsServer.on("connection", (socket) => {
-  socket.on("message", async (message) => {
-    const prompt = message.toString();
-    console.log({ prompt });
-    socket.send("[START MESSAGE]");
-    await stream(prompt, socket.send.bind(socket));
-  });
-});
-
 const server = app.listen(port);
 
 server.on("upgrade", (request, socket, head) => {
-  wsServer.handleUpgrade(request, socket, head, (socket) => {
-    wsServer.emit("connection", socket, request);
+  wss.handleUpgrade(request, socket, head, (socket) => {
+    wss.emit("connection", socket, request);
   });
 });

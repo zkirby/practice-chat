@@ -1,0 +1,14 @@
+.chat__spinner {
+    height: 4px;
+    width: 60px;
+
+    background: linear-gradient(black, lightgray);
+    animation: spin 2s linear forwards;
+}
+  
+ 
+  
+@keyframes spin {
+    from { transform: rotateZ(0deg); } 
+    to { transform: rotateZ(360deg); }
+}

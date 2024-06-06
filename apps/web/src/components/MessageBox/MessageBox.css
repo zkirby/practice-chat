@@ -26,14 +26,14 @@
 
 .mb-body__form {
   margin-bottom: 30px;
-}
 
-.mb-body__form input {
-  width: 60%;
-  border: none;
-  background-color: rgb(0, 0, 0, 0.1);
-  height: 35px;
-  border-radius: 20px;
+  & input {
+    width: 60%;
+    border: none;
+    background-color: rgb(0, 0, 0, 0.1);
+    height: 35px;
+    border-radius: 20px;
+  }
 }
 
 .mb-body__message {

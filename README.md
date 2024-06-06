@@ -38,3 +38,11 @@ https://ably.com/topic/the-challenge-of-scaling-websockets#web-socket-fallback-s
 "You might also consider dropping existing connections to reduce the load on your system; for example, the idle ones (which, even though idle, are still consuming resources due to heartbeats). "
 
 Best strategy for reconnect is exponential backoff w/ jitter
+
+If you examine the ratio of Ping/Pong frames to actual messages sent over WebSockets, you might send more heartbeats than messages. If your use case allows, reduce the frequency of heartbeats to make it easier to scale
+
+Backpressure is one of the critical issues you will have to deal with when streaming data to client devices at scale over the internet. For example, let’s assume you are streaming 20 messages per second, but a client can only handle 15 messages per second. What do you do with the remaining five messages per second that the client cannot consume?
+
+You need to manage buffers to ensure that the client is not overwhelmed and doesn't drop messages.
+
+To reduce backpressure you can drop packets indiscriminately and do message compression

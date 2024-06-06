@@ -3,24 +3,30 @@ import type { UIMessage } from "@/pages/Chat";
 
 import "./MessageBox.css";
 
-const _color = new Map();
 const colors = [
   { bg: "coral" },
-  { bd: "bisque" },
-  { bd: "lightskyblue" },
-  { bd: "slateblue" },
+  { bg: "bisque" },
+  { bg: "lightskyblue" },
+  { bg: "slateblue" },
 ];
+class ColorCache {
+  __cache = new Map();
+  rnd() {
+    return colors[Math.floor(Math.random() * colors.length)].bg;
+  }
+  color(id: UIMessage["id"]) {
+    return this.__cache.get(id) ?? this.__cache.set(id, this.rnd()).get(id);
+  }
+}
+
+const c = new ColorCache();
 
 function Message({ id, role, text }: Pick<UIMessage, "role" | "text" | "id">) {
-  if (!_color.has(id)) {
-    _color.set(id, colors[Math.floor(Math.random() * colors.length)]);
-  }
-
   return (
     <pre
       className={cns("mb-body__message ", role)}
       style={{
-        backgroundColor: _color.get(id).bg ?? "blue",
+        backgroundColor: c.color(id),
       }}
     >
       {id as unknown as string}:{text}

@@ -11,11 +11,12 @@ enum ReadyState {
 
 type WebsocketMessage = string | ArrayBufferLike | Blob | ArrayBufferView;
 
-const UserIdBrand = Symbol("ws:UserId");
-const ContentIdBrand = Symbol("ws:ContentId");
+declare const __brand: unique symbol;
+type Brand<B> = { readonly [__brand]: B };
+type Id<B> = string & Brand<B>;
 
-type UserId = { __brand: typeof UserIdBrand };
-type ContentId = { __brand: typeof ContentIdBrand };
+type UserId = Id<"UserId">;
+type ContentId = Id<"ContentId">;
 
 type FragmentPayload = {
   /** id of the message that this fragment belongs to */

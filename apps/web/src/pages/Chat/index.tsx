@@ -6,6 +6,8 @@ import MessageBox from "@/components/MessageBox";
 import Loading from "@/components/Loading";
 
 import "./chat.css";
+import useSSE from "../../hooks/useSSE";
+import { ID, URL } from "../../strings";
 
 export type UIMessage = {
   id: MessagePayload["user"]["id"];
@@ -19,10 +21,17 @@ type MessageCache = { [userId: string]: { [contentId: string]: UIMessage } };
 export default function Chat() {
   const [cache, setMessageCache] = useState<MessageCache>({});
   const [loading, setLoading] = useState(true);
+  const [ids, setIds] = useState<string[]>([]);
 
-  const [send] = useWebsocket("ws://127.0.0.1:5001", {
+  const [send] = useWebsocket(`ws://${URL}`, {
     onOpen: useCallback(() => setLoading(false), []),
     onMessage: useCallback((m) => setMessageCache(insertMessage(m)), []),
+  });
+  useSSE(`http://${URL}/streaming?id=${ID}`, {
+    onMessage: useCallback((ids) => {
+      setIds(ids);
+      console.log(`${ID}: ${ids}`);
+    }, []),
   });
 
   const messages = getMessages(cache);
@@ -32,7 +41,7 @@ export default function Chat() {
       <Loading loading={loading}>
         <div className="chat__content">
           <Threads />
-          <MessageBox messages={messages} send={send} />
+          <MessageBox messages={messages} send={send} ids={ids} />
         </div>
       </Loading>
     </div>

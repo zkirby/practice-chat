@@ -2,6 +2,7 @@ import { cns } from "@/display.utils";
 import type { UIMessage } from "@/pages/Chat";
 
 import "./MessageBox.css";
+import ActiveUsers from "../ActiveUsers";
 
 const colors = [
   { bg: "coral" },
@@ -35,9 +36,11 @@ function Message({ id, role, text }: Pick<UIMessage, "role" | "text" | "id">) {
 }
 
 export default function MessageBox({
+  ids,
   messages,
   send,
 }: {
+  ids: string[];
   messages: UIMessage[];
   send: (msg: string) => void;
 }) {
@@ -45,7 +48,9 @@ export default function MessageBox({
 
   return (
     <div className="mb-body__wrapper">
-      <div className="mb-body__header"></div>
+      <div className="mb-body__header">
+        <ActiveUsers ids={ids} />
+      </div>
 
       <div className="mb-body__content">
         <div className="mb-body__message-wrapper">

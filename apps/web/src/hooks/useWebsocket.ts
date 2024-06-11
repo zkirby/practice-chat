@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef } from "react";
 import useUserId from "./useUserId";
+import withJsonParse from "./withJsonParse";
 
 enum ReadyState {
   UNINSTANTIATED = -1,
@@ -92,9 +93,3 @@ export default function useWebsocket(
 
   return [send];
 }
-
-/** Middleware to JSON parse contents before passing on */
-const withJsonParse =
-  <T extends (a: MessagePayload) => void>(cb: T) =>
-  (payload: MessageEvent<string>): void =>
-    cb(JSON.parse(payload.data));

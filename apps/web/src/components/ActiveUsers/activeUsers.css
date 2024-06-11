@@ -1,0 +1,14 @@
+.active-users {
+    display: flex;
+    column-gap: 10px;
+
+    & .active-users__circle {
+        height: 30px;
+        aspect-ratio: 1 / 1;
+        border: 1px solid black; 
+        border-radius: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}

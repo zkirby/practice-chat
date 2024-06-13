@@ -52,6 +52,10 @@ const broadcast = (message) =>
 
 app.get("/healthz", (req, res) => res.send("good"));
 
+app.get("/friends", (req, res) => {
+  res.send({ friends: [{ name: "bob" }, { name: "sally" }] });
+});
+
 app.get("/streaming", (req, res) => {
   res.setHeader("Cache-Control", "no-cache");
   res.setHeader("Content-Type", "text/event-stream");

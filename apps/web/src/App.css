@@ -11,3 +11,17 @@ body,
   height: 100%;
   width: 100%;
 }
+
+
+.spinner {
+  height: 15px;
+  width: 4px;
+  background-color: black;
+  border-radius: 10px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotateZ(0deg) } 
+  to { transform: rotateZ(360deg) } 
+ }

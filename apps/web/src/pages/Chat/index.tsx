@@ -28,10 +28,7 @@ export default function Chat() {
     onMessage: useCallback((m) => setMessageCache(insertMessage(m)), []),
   });
   useSSE(`http://${URL}/streaming?id=${ID}`, {
-    onMessage: useCallback((ids) => {
-      setIds(ids);
-      console.log(`${ID}: ${ids}`);
-    }, []),
+    onMessage: useCallback((ids) => setIds(ids), []),
   });
 
   const messages = getMessages(cache);

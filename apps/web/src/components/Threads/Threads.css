@@ -1,6 +1,13 @@
 .threads__wrapper {
   min-width: 350px;
   border-right: 1px solid rgb(0, 0, 0, 0.1);
+
+  & .threads__messages {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+  }
 }
 
 .threads__header {
@@ -35,4 +42,18 @@
   justify-content: space-between;
 }
 
+.threads__thread {
+  height: 100px;
+  width: 100%;
+  border: 1px solid rgb(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-left: none;
+  border-right: none;
+  cursor: pointer;
+}
 
+.threads__thread + .threads__thread {
+  border-top: none;
+}

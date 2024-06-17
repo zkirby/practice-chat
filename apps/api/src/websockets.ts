@@ -13,6 +13,7 @@ export const attachWebsocket = (wss: any, server: http.Server) => {
     socket.on("message", async (payload: any) => {
       const prompt = payload.toString();
       const { id, message } = JSON.parse(prompt);
+      console.log(`WSS REQUEST: ${id} ${message.slice(0, 5)}`);
 
       broadcast({
         user: { id, role: "human" },

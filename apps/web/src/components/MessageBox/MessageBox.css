@@ -45,12 +45,12 @@
   white-space: wrap;
 }
 
-.mb-body__message.human {
+.mb-body__message.me {
   align-self: flex-end;
   color: white;
 }
 
-.mb-body__message.ai {
+.mb-body__message.them {
   background-color: rgb(0, 0, 0, 0.1) !important;
   align-self: flex-start;
 }

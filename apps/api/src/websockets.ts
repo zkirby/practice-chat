@@ -1,13 +1,31 @@
 import http from "http";
+import { Redis } from "./infra/redis";
 
-// TODO: Move to redis or some external DB.
+const CHANNEL_LIVE_CHAT = "livechat";
+
 let _clients: any[] = [];
 let _id = 0;
 
 const broadcast = (message: any) =>
   _clients.forEach((s) => s.send(JSON.stringify(message)));
 
-export const attachWebsocket = (wss: any, server: http.Server) => {
+const subscribeToRedis = async (redis: Redis) => {
+  const subscriber = redis.duplicate();
+  await subscriber.connect();
+
+  subscriber.subscribe(CHANNEL_LIVE_CHAT, (_, message) => {
+    broadcast(message);
+  });
+};
+
+export const attachWebsocket = (
+  wss: any,
+  server: http.Server,
+  services: { redis: Redis }
+) => {
+  const { redis } = services;
+  subscribeToRedis(redis);
+
   wss.on("connection", (socket: any) => {
     _clients.push(socket);
     socket.on("message", async (payload: any) => {
@@ -20,6 +38,15 @@ export const attachWebsocket = (wss: any, server: http.Server) => {
         content: { id: ++_id, text: message },
         sentAt: new Date().toISOString(),
       });
+
+      redis.publish(
+        CHANNEL_LIVE_CHAT,
+        JSON.stringify({
+          user: { id, role: "human" },
+          content: { id: ++_id, text: message },
+          sentAt: new Date().toISOString(),
+        })
+      );
 
       // const cid = ++_id;
       // const sentAt = new Date().toISOString();

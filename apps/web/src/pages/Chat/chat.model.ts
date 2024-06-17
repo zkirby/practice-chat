@@ -15,6 +15,8 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
   /** Add a message to the message cache */
   add: (m) => set((s) => ({ cache: insertMessage(m, s.cache) })),
+
+  /** Get all the messages in the message cache */
   get: () => getMessages(get().cache),
 }));
 

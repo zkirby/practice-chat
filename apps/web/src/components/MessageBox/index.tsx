@@ -1,8 +1,9 @@
 import { cns } from "@/display.utils";
-import type { UIMessage } from "@/pages/Chat";
 
 import "./MessageBox.css";
 import ActiveUsers from "../ActiveUsers";
+import { ID } from "../../strings";
+import { UIMessage } from "@/pages/Chat/chat.types";
 
 const colors = [
   { bg: "coral" },
@@ -22,10 +23,10 @@ class ColorCache {
 
 const c = new ColorCache();
 
-function Message({ id, role, text }: Pick<UIMessage, "role" | "text" | "id">) {
+function Message({ id, text }: Pick<UIMessage, "role" | "text" | "id">) {
   return (
     <pre
-      className={cns("mb-body__message ", role)}
+      className={cns("mb-body__message ", id === ID ? "me" : "them")}
       style={{
         backgroundColor: c.color(id),
       }}

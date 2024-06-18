@@ -2,15 +2,16 @@ import { Express } from "express";
 import { friends } from "./controllers/threads";
 import { Redis } from "./infra/redis";
 import { signToken } from "./auth/authToken";
+import { random } from "./helpers";
 
 const USER_NAMES = ["zach", "cat", "josh", "bob", "wendy"];
+const USER_COLORS = ["coral", "bisque", "lightskyblue", "slateblue"];
 
 export const attachPrivateRoutes = (app: Express) => {
   app.get("/friends", friends.list);
 
   app.get("/user", (req, res) => {
-    res.setHeader("content-type", "application/json");
-    res.status(200).json(req.currentUser);
+    res.status(200).send({ user: req.currentUser });
   });
 };
 
@@ -27,10 +28,10 @@ export const attachPublicRoutes = (
     }
 
     const userId = `${Math.round(Math.random() * 1000)}`;
-    const userName =
-      USER_NAMES[Math.round(Math.random() * USER_NAMES.length)] + userId;
+    const name = random(USER_NAMES) + userId;
+    const color = random(USER_COLORS);
 
-    await redis.set(userId, JSON.stringify({ userId, userName }));
+    await redis.set(userId, JSON.stringify({ userId, name, color }));
 
     res.status(200).cookie("chat-user-token", signToken({ sub: userId }), {
       maxAge: 900000,

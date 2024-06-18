@@ -14,7 +14,8 @@ export default function Authenticate({ children }: React.PropsWithChildren) {
       setLoading(true);
       await fetch("/auth");
       const resp = await fetch("/user");
-      set(await resp.json());
+      const { user } = await resp.json();
+      set(user);
       setLoading(false);
     }
 

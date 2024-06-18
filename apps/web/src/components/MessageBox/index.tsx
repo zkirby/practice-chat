@@ -5,24 +5,6 @@ import ActiveUsers from "../ActiveUsers";
 import { ID } from "../../strings";
 import { UIMessage } from "@/pages/Chat/chat.types";
 
-const colors = [
-  { bg: "coral" },
-  { bg: "bisque" },
-  { bg: "lightskyblue" },
-  { bg: "slateblue" },
-];
-class ColorCache {
-  __cache = new Map();
-  rnd() {
-    return colors[Math.floor(Math.random() * colors.length)].bg;
-  }
-  color(id: UIMessage["id"]) {
-    return this.__cache.get(id) ?? this.__cache.set(id, this.rnd()).get(id);
-  }
-}
-
-const c = new ColorCache();
-
 function Message({ id, text }: Pick<UIMessage, "role" | "text" | "id">) {
   return (
     <div className="mb-body__message">
@@ -30,7 +12,7 @@ function Message({ id, text }: Pick<UIMessage, "role" | "text" | "id">) {
       <div
         className={cns("mb-body__message-content", id === ID ? "me" : "them")}
         style={{
-          backgroundColor: c.color(id),
+          backgroundColor: "red",
         }}
       >
         {text}

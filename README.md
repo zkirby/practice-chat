@@ -8,6 +8,7 @@
   - ec2 auto scale
   - Postgres RDS db
 - [ ] Add offline support + optimistic updates
+- [ ] response UI design
 
 ### Resources
 

@@ -1,10 +1,14 @@
 ### TODO:
 
-- [ ] Add SSE for online notifs
+- [ ] Add auth
+- [ ] Add local DB / drizzle
+- [ ] Finish styling
+
 - [ ] Deploy
-- [ ] Add auth / Accounts
-- [ ] General cleanup of code
-- [ ] General styling touch ups
+  - load balancer
+  - ec2 auto scale
+  - Postgres RDS db
+- [ ] Add offline support + optimistic updates
 
 ### Resources
 

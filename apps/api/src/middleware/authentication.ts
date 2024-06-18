@@ -1,31 +1,30 @@
-import { Request } from "express";
+import { Express } from "express";
 
-import { verifyToken } from "@/auth/authToken";
-import { catchErrors, InvalidTokenError } from "@/errors";
+import { verifyToken } from "../auth/authToken";
+import { InvalidTokenError } from "../errors";
+import { Redis } from "../infra/redis";
 
-const user = { name: "zach" };
+export const attachAuth = (app: Express, services: { redis: Redis }) => {
+  const { redis } = services;
 
-export const authenticateUser = catchErrors(async (req, _res, next) => {
-  const token = getAuthTokenFromRequest(req);
-  if (!token) {
-    throw new InvalidTokenError("Authentication token not found.");
-  }
-  const userId = verifyToken(token).sub;
-  if (!userId) {
-    throw new InvalidTokenError("Authentication token is invalid.");
-  }
-  //   const user = await User.findOne(userId);
-  if (!user) {
-    throw new InvalidTokenError(
-      "Authentication token is invalid: User not found."
-    );
-  }
-  req.currentUser = user;
-  next();
-});
+  app.use("/", async (req, _res, next) => {
+    const token = req.cookies["chat-user-token"];
+    if (!token) {
+      throw new InvalidTokenError("Authentication token not found.");
+    }
+    const userId = verifyToken(token).sub;
+    if (!userId) {
+      throw new InvalidTokenError("Authentication token is invalid.");
+    }
+    const user = await redis.get(userId);
 
-const getAuthTokenFromRequest = (req: Request): string | null => {
-  const header = req.get("Authorization") || "";
-  const [bearer, token] = header.split(" ");
-  return bearer === "Bearer" && token ? token : null;
+    if (!user) {
+      throw new InvalidTokenError(
+        "Authentication token is invalid: User not found."
+      );
+    }
+    /// @ts-expect-error allow
+    req.currentUser = JSON.parse(user);
+    next();
+  });
 };

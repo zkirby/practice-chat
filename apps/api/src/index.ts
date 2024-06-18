@@ -2,8 +2,10 @@ import express from "express";
 import cors from "cors";
 import { WebSocketServer } from "ws";
 import http from "http";
-import { attachPrivateRoutes } from "./routes";
-import { authenticateUser } from "./middleware/authentication";
+import cookieParser from "cookie-parser";
+
+import { attachPrivateRoutes, attachPublicRoutes } from "./routes";
+import { attachAuth } from "./middleware/authentication";
 import { attachSSE } from "./sse";
 import { attachWebsocket } from "./websockets";
 import { localLog } from "./middleware/localLog";
@@ -19,12 +21,15 @@ const initServer = (services: Services) => {
   const app = express();
   app.use(cors());
   app.use(express.json());
+  app.use(cookieParser());
 
   app.use(localLog);
 
-  // TODO: set up auth
-  // app.use("/", authenticateUser);
+  attachPublicRoutes(app, services);
+
+  // attachAuth(app, services);
   app.get("/healthz", (req, res) => res.status(200).send({ success: true }));
+
   attachPrivateRoutes(app);
   attachSSE(app);
 
@@ -43,8 +48,8 @@ async function start() {
 
   process.on("exit", async () => {
     console.log("[SERVER] Closing server");
-    console.log("[SERVER] Closing redis");
 
+    console.log("[SERVER] Closing redis");
     await closeRedis(redis);
 
     console.log("[SERVER] Server is closed...");

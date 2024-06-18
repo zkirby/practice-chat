@@ -5,10 +5,10 @@ import useWebsocket from "@/hooks/useWebsocket";
 import Threads from "@/components/Threads";
 import MessageBox from "@/components/MessageBox";
 import Loading from "@/components/Loading";
+import useSSE from "@/hooks/useSSE";
+import { ID, URL } from "@/strings";
 
 import "./chat.css";
-import useSSE from "../../hooks/useSSE";
-import { ID, URL } from "../../strings";
 import { useChatStore } from "./chat.model";
 
 export default function Chat() {

@@ -25,14 +25,17 @@ const c = new ColorCache();
 
 function Message({ id, text }: Pick<UIMessage, "role" | "text" | "id">) {
   return (
-    <pre
-      className={cns("mb-body__message ", id === ID ? "me" : "them")}
-      style={{
-        backgroundColor: c.color(id),
-      }}
-    >
-      {id as unknown as string}:{text}
-    </pre>
+    <div className="mb-body__message">
+      <div className="mb-body__message-label">{id as unknown as string}</div>
+      <div
+        className={cns("mb-body__message-content", id === ID ? "me" : "them")}
+        style={{
+          backgroundColor: c.color(id),
+        }}
+      >
+        {text}
+      </div>
+    </div>
   );
 }
 

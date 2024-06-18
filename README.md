@@ -1,9 +1,8 @@
 ### TODO:
 
 - [ ] Add auth
-- [ ] Add local DB / drizzle
-- [ ] Finish styling
 
+- [ ] Add drizzle
 - [ ] Deploy
   - load balancer
   - ec2 auto scale

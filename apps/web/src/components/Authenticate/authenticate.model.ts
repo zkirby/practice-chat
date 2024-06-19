@@ -1,9 +1,9 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+// import { persist } from "zustand/middleware";
 
 interface User {
   userId: string;
-  userName: string;
+  name: string;
 }
 
 interface UserStore {
@@ -11,14 +11,19 @@ interface UserStore {
   set: (user: User) => void;
 }
 
-export const useUser = create(
-  persist<UserStore>(
-    (set) => ({
-      user: null,
-      set: (user: User) => set(() => ({ user })),
-    }),
-    {
-      name: "user",
-    }
-  )
-);
+// export const useUser = create(
+//   persist<UserStore>(
+//     (set) => ({
+//       user: null,
+//       set: (user: User) => set(() => ({ user })),
+//     }),
+//     {
+//       name: "user",
+//     }
+//   )
+// );
+
+export const useUser = create<UserStore>((set) => ({
+  user: null,
+  set: (user: User) => set(() => ({ user })),
+}));

@@ -23,7 +23,7 @@ export const attachPublicRoutes = (
 
   app.get("/auth", async (req, res) => {
     if (req.cookies["chat-user-token"]) {
-      res.status(200);
+      res.status(200).send({ success: true });
       return;
     }
 
@@ -33,9 +33,12 @@ export const attachPublicRoutes = (
 
     await redis.set(userId, JSON.stringify({ userId, name, color }));
 
-    res.status(200).cookie("chat-user-token", signToken({ sub: userId }), {
+    res.cookie("chat-user-token", userId, {
       maxAge: 900000,
       httpOnly: true,
+      secure: false,
+      sameSite: "lax",
     });
+    res.status(200).send({ success: true });
   });
 };

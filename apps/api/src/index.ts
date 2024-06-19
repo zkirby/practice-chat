@@ -19,7 +19,12 @@ interface Services {
 
 const initServer = (services: Services) => {
   const app = express();
-  app.use(cors());
+  app.use(
+    cors({
+      origin: "http://localhost:5173",
+      credentials: true,
+    })
+  );
   app.use(express.json());
   app.use(cookieParser());
 
@@ -27,16 +32,16 @@ const initServer = (services: Services) => {
 
   attachPublicRoutes(app, services);
 
-  // attachAuth(app, services);
-  app.get("/healthz", (req, res) => res.status(200).send({ success: true }));
-
-  attachPrivateRoutes(app);
-  attachSSE(app);
-
   const server = http.createServer(app);
   const wss = new WebSocketServer({ noServer: true });
 
   attachWebsocket(wss, server, services);
+  attachSSE(app);
+
+  attachAuth(app, services);
+  app.get("/healthz", (req, res) => res.status(200).send({ success: true }));
+
+  attachPrivateRoutes(app);
 
   server.listen(port, () => console.log("### Server is up and running ###"));
 };

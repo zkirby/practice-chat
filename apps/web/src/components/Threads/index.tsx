@@ -5,7 +5,10 @@ import { URL } from "../../strings";
 export default function Threads() {
   const query = useQuery({
     queryKey: ["/friends"],
-    queryFn: () => fetch(`http://${URL}/friends`).then((res) => res.json()),
+    queryFn: () =>
+      fetch(`http://${URL}/friends`, { credentials: "include" }).then((res) =>
+        res.json()
+      ),
   });
 
   return (

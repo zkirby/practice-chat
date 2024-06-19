@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from "react";
-import useUserId from "./useUserId";
 import withJsonParse from "./withJsonParse";
+import { useUser } from "../components/Authenticate/authenticate.model";
 
 enum ReadyState {
   UNINSTANTIATED = -1,
@@ -60,7 +60,7 @@ export default function useWebsocket(
   }
 ): [WebSocket["send"]] {
   const ws = useRef<WebSocket>();
-  const id = useUserId();
+  const user = useUser((u) => u.user);
 
   useEffect(() => {
     ws.current = new WebSocket(path);
@@ -84,12 +84,15 @@ export default function useWebsocket(
     };
   }, [onOpen, wrappedOnMessage]);
 
-  const send = useCallback((message: WebsocketMessage) => {
-    const w = ws.current;
-    if (!w) return;
-    if (w?.readyState === ReadyState.OPEN)
-      w.send(JSON.stringify({ id, message }));
-  }, []);
+  const send = useCallback(
+    (message: WebsocketMessage) => {
+      const w = ws.current;
+      if (!w) return;
+      if (w?.readyState === ReadyState.OPEN)
+        w.send(JSON.stringify({ id: user?.userId, message }));
+    },
+    [user]
+  );
 
   return [send];
 }

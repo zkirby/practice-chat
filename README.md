@@ -1,7 +1,6 @@
 ### TODO:
 
 - [ ] Add postgres locally
-- [ ] Add (and fix) auth.
 - [ ] responsive UI design
 
 - [ ] Add offline support + optimistic updates

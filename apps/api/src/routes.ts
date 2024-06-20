@@ -9,7 +9,9 @@ export const attachPrivateRoutes = (app: Express) => {
   app.get("/friends", friends.list);
 
   app.get("/me", (req, res) => {
-    res.status(200).send({ user: req.currentUser });
+    res
+      .status(200)
+      .send({ user: { name: req.currentUser.name, id: req.currentUser.id } });
   });
 };
 

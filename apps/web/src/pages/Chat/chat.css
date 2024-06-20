@@ -1,4 +1,9 @@
 .chat__content {
     display: flex;
     height: 100%;
+
+    @media (width: 1000px) {
+        
+        background-color: red;
+    }
 }

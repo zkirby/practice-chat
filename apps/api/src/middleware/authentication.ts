@@ -1,6 +1,5 @@
 import { Express } from "express";
 
-import { InvalidTokenError } from "../errors";
 import { Database } from "../infra/database";
 
 export const attachAuth = (app: Express, services: { db: Database }) => {

@@ -38,6 +38,7 @@ export type MessagePayload = {
     id: ContentId;
     /** role of the user that sent this message */
     role: "ai" | "human";
+    name: string;
   };
   content: FragmentPayload | FullTextPayload;
   /** ISO DateTime that the *message* was sent at */
@@ -89,7 +90,7 @@ export default function useWebsocket(
       const w = ws.current;
       if (!w) return;
       if (w?.readyState === ReadyState.OPEN)
-        w.send(JSON.stringify({ id: user?.userId, message }));
+        w.send(JSON.stringify({ id: user.id, message, name: user.name }));
     },
     [user]
   );

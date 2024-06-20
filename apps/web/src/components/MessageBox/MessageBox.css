@@ -50,6 +50,10 @@
 .mb-body__message {
   margin: 5px;
 
+  &:has(.me) {
+    align-self: flex-end;
+  }
+
   & .mb-body__message-label {
     font-size: 0.7em;
     color: rgb(0, 0, 0, 0.4);
@@ -64,7 +68,6 @@
     white-space: wrap;
 
     &.me {
-      align-self: flex-end;
       color: white;
     }
 

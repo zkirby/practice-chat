@@ -17,4 +17,5 @@ export type UIMessage = {
    * The full text, until now, of the message
    */
   text: string;
+  name: string;
 };

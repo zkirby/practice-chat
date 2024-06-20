@@ -60,6 +60,7 @@ export default function Authenticate({ children }: React.PropsWithChildren) {
           <h2>Sign In</h2>
           <form
             onSubmit={(e) => {
+              e.preventDefault();
               const form = new FormData(e.currentTarget);
               userMutation.mutate({
                 username: form.get("username") as string,

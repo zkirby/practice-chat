@@ -24,7 +24,13 @@ const initServer = (services: Services) => {
   const app = express();
   app.use(
     cors({
-      origin: "http://localhost:5173",
+      origin: [
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://localhost:5175",
+        "http://localhost:5176",
+        "http://localhost:5177",
+      ],
       credentials: true,
     })
   );
@@ -44,7 +50,7 @@ const initServer = (services: Services) => {
   attachAuth(app, services);
   app.get("/healthz", (req, res) => res.status(200).send({ success: true }));
 
-  attachPrivateRoutes(app);
+  attachPrivateRoutes(app, services);
 
   server.listen(port, () => console.log("### Server is up and running ###"));
 };

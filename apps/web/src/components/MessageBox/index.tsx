@@ -1,16 +1,13 @@
 import { cns } from "@/display.utils";
 
 import "./MessageBox.css";
-import ActiveUsers from "../ActiveUsers";
 import { UIMessage } from "@/pages/Chat/chat.types";
 import { useUser } from "../Authenticate/authenticate.model";
 
 export default function MessageBox({
-  ids,
   messages,
   send,
 }: {
-  ids: string[];
   messages: UIMessage[];
   send: (msg: string) => void;
 }) {
@@ -19,18 +16,16 @@ export default function MessageBox({
 
   return (
     <div className="mb-body__wrapper">
-      <div className="mb-body__header">
-        <ActiveUsers ids={ids} />
-      </div>
+      <div className="mb-body__header"></div>
 
       <div className="mb-body__content">
         <div className="mb-body__message-wrapper">
           {sorted.map((m, key) => (
             <Message
-              name={m.id === user?.userId ? user.name : m.id}
+              name={m.id === user?.id ? user.name : m.name}
               key={key}
               text={m.text}
-              isMe={m.id === user?.userId}
+              isMe={m.id === user?.id}
             />
           ))}
         </div>

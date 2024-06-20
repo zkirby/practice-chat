@@ -1,17 +1,19 @@
 import { Express } from "express";
-import { friends } from "./controllers/threads";
+import { friends } from "./controllers/friends";
 import { Database } from "./infra/database";
+import { users } from "./controllers/users";
 
-const USER_NAMES = ["zach", "cat", "josh", "bob", "wendy"];
-const USER_COLORS = ["coral", "bisque", "lightskyblue", "slateblue"];
-
-export const attachPrivateRoutes = (app: Express) => {
-  app.get("/friends", friends.list);
+export const attachPrivateRoutes = (
+  app: Express,
+  services: { db: Database }
+) => {
+  app.get("/friends", friends.list(services));
+  app.post("/friends", friends.add(services));
+  app.get("/users", users.list(services));
 
   app.get("/me", (req, res) => {
-    res
-      .status(200)
-      .send({ user: { name: req.currentUser.name, id: req.currentUser.id } });
+    const { name, id } = req.currentUser;
+    res.status(200).send({ user: { name, id } });
   });
 };
 

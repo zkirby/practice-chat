@@ -15,7 +15,8 @@ export const attachAuth = (app: Express, services: { db: Database }) => {
 
     let user;
     try {
-      user = await db.query(`SELECT * FROM users WHERE id=${userId}`);
+      const userResp = await db.query(`SELECT * FROM users WHERE id=${userId}`);
+      user = userResp.rows[0];
     } catch {
       res.send(401);
       return;

@@ -1,0 +1,32 @@
+.modal-wrapper {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    display: grid;
+    place-content: center;
+}
+
+.modal-wrapper[data-open="false"] {
+    display: none;
+}
+
+.overlay {
+    background-color: rgb(0, 0, 0, 0.5);
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.modal {
+    padding: 20px;
+    height: fit-content;
+    width: fit-content;
+    background-color: white;
+    z-index: 1;
+    border-radius: 6px;
+}

@@ -30,11 +30,11 @@ export const attachWebsocket = (
     _clients.push(socket);
     socket.on("message", async (payload: any) => {
       const prompt = payload.toString();
-      const { id, message } = JSON.parse(prompt);
+      const { id, message, name } = JSON.parse(prompt);
       console.log(`WSS REQUEST: ${id} ${message.slice(0, 5)}`);
 
       broadcast({
-        user: { id, role: "human" },
+        user: { id, role: "human", name },
         content: { id: ++_id, text: message },
         sentAt: new Date().toISOString(),
       });
@@ -42,7 +42,7 @@ export const attachWebsocket = (
       redis.publish(
         CHANNEL_LIVE_CHAT,
         JSON.stringify({
-          user: { id, role: "human" },
+          user: { id, role: "human", name },
           content: { id: ++_id, text: message },
           sentAt: new Date().toISOString(),
         })

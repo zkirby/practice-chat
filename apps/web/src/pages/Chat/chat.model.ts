@@ -46,6 +46,7 @@ const insertMessage = (
         role: user.role,
         text,
         sentAt,
+        name: user.name,
       },
     },
   };

@@ -1,13 +1,14 @@
 ### TODO:
 
 - [ ] Add postgres locally
-- [ ] responsive UI design
 
 - [ ] Add offline support + optimistic updates
 - [ ] Deploy to AWS
   - load balancer
   - ec2 auto scale
   - Postgres RDS db
+
+**_ CLEAN UP AND STOP WORKING ON IT - move to the next thing _**
 
 ### Resources
 

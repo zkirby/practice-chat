@@ -1,13 +1,15 @@
 import { createClient } from "redis";
 
-export type Redis = Awaited<ReturnType<typeof initRedis>>;
+export type Redis = Awaited<ReturnType<typeof init>>;
 
-export const initRedis = async () => {
+const init = async () => {
   return createClient()
     .on("error", (err) => console.log("[REDIS] Client Error", err))
     .connect();
 };
 
-export const closeRedis = async (client: Redis) => {
+const close = async (client: Redis) => {
   await client.disconnect();
 };
+
+export { init, close };

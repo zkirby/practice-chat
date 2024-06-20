@@ -9,12 +9,15 @@ import { attachAuth } from "./middleware/authentication";
 import { attachSSE } from "./sse";
 import { attachWebsocket } from "./websockets";
 import { localLog } from "./middleware/localLog";
-import { Redis, closeRedis, initRedis } from "./infra/redis";
+
+import { Redis, close as closeRedis, init as initRedis } from "./infra/redis";
+import { Database, close as closeDB, init as initDB } from "./infra/database";
 
 const port = process.env.PORT || 5001;
 
 interface Services {
   redis: Redis;
+  db: Database;
 }
 
 const initServer = (services: Services) => {
@@ -48,14 +51,18 @@ const initServer = (services: Services) => {
 
 async function start() {
   const redis = await initRedis();
+  const database = await initDB();
 
-  initServer({ redis });
+  initServer({ redis, db: database });
 
   process.on("exit", async () => {
     console.log("[SERVER] Closing server");
 
     console.log("[SERVER] Closing redis");
     await closeRedis(redis);
+
+    console.log("[SERVER] Closing database");
+    await closeDB(database);
 
     console.log("[SERVER] Server is closed...");
     process.exit();

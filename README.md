@@ -1,14 +1,14 @@
 ### TODO:
 
-- [ ] Add auth
+- [ ] Add postgres locally
+- [ ] Add (and fix) auth.
+- [ ] responsive UI design
 
-- [ ] Add drizzle
-- [ ] Deploy
+- [ ] Add offline support + optimistic updates
+- [ ] Deploy to AWS
   - load balancer
   - ec2 auto scale
   - Postgres RDS db
-- [ ] Add offline support + optimistic updates
-- [ ] response UI design
 
 ### Resources
 

@@ -1,0 +1,26 @@
+.auth-screen {
+    height: 100%;
+    width: 100%;
+    display: grid;
+    place-content: center;
+}
+
+.login-screen {
+    border: 1.5px solid rgb(0, 0, 0, 0.2);
+    border-radius: 6px;
+    padding: 20px;
+    height: fit-content;
+
+    & form {
+        margin-top: 10px;
+        display: flex;
+        flex-direction: column;
+        row-gap: 10px;
+
+        & button {
+            width: fit-content;
+            padding: 0 10px;
+            cursor: pointer;
+        }
+    }
+}

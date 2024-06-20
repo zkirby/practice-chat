@@ -1,8 +1,6 @@
 import { Express } from "express";
 import { friends } from "./controllers/threads";
-import { Redis } from "./infra/redis";
-import { signToken } from "./auth/authToken";
-import { random } from "./helpers";
+import { Database } from "./infra/database";
 
 const USER_NAMES = ["zach", "cat", "josh", "bob", "wendy"];
 const USER_COLORS = ["coral", "bisque", "lightskyblue", "slateblue"];
@@ -10,35 +8,38 @@ const USER_COLORS = ["coral", "bisque", "lightskyblue", "slateblue"];
 export const attachPrivateRoutes = (app: Express) => {
   app.get("/friends", friends.list);
 
-  app.get("/user", (req, res) => {
+  app.get("/me", (req, res) => {
     res.status(200).send({ user: req.currentUser });
   });
 };
 
 export const attachPublicRoutes = (
   app: Express,
-  services: { redis: Redis }
+  services: { db: Database }
 ) => {
-  const { redis } = services;
+  const { db } = services;
+  app.put("/users", async (req, res) => {
+    const { password, username } = req.body;
+    let userResp = await db.query(
+      `SELECT * FROM users WHERE password='${password}' AND name='${username}'`
+    );
 
-  app.get("/auth", async (req, res) => {
-    if (req.cookies["chat-user-token"]) {
-      res.status(200).send({ success: true });
-      return;
+    if (!userResp.rows.length) {
+      await db.query(
+        `INSERT INTO users (name, password) VALUES ('${username}', '${password}')`
+      );
+      userResp = await db.query(
+        `SELECT * FROM users WHERE password='${password}' AND name='${username}'`
+      );
     }
 
-    const userId = `${Math.round(Math.random() * 1000)}`;
-    const name = random(USER_NAMES) + userId;
-    const color = random(USER_COLORS);
-
-    await redis.set(userId, JSON.stringify({ userId, name, color }));
-
-    res.cookie("chat-user-token", userId, {
+    const user = userResp.rows[0];
+    res.cookie("chat-user-token", user.id, {
       maxAge: 900000,
       httpOnly: true,
       secure: false,
       sameSite: "lax",
     });
-    res.status(200).send({ success: true });
+    res.status(200).send({ user });
   });
 };

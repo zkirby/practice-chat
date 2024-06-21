@@ -1,5 +1,6 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
+import { useQuery } from "@tanstack/react-query";
 
 import useWebsocket from "@/hooks/useWebsocket";
 import Threads from "@/components/Threads";
@@ -13,13 +14,36 @@ import { useUser } from "@/components/Authenticate/authenticate.model";
 import "./chat.css";
 
 export default function Chat() {
+  const messagesQuery = useQuery({
+    queryKey: ["/messages"],
+    queryFn: () =>
+      fetch(`http://${URL}/messages`, { credentials: "include" }).then((res) =>
+        res.json()
+      ),
+  });
+
   const [loading, setLoading] = useState(true);
   const [ids, setIds] = useState<string[]>([]);
   const user = useUser((u) => u.user);
 
-  const { messages, setMessages } = useChatStore(
-    useShallow((s) => ({ messages: s.get(), setMessages: s.add }))
+  const { messages, setMessages, setBulkMessages } = useChatStore(
+    useShallow((s) => ({
+      messages: s.get(),
+      setMessages: s.add,
+      setBulkMessages: s.addBulk,
+    }))
   );
+
+  useEffect(() => {
+    if (messagesQuery.isFetched) {
+      const formatted = messagesQuery.data.messages.map((m) => ({
+        user: { id: m.userId, name: m.name },
+        sentAt: m.sentAt,
+        content: { text: m.text, id: m.id },
+      }));
+      setBulkMessages(formatted);
+    }
+  }, [messagesQuery.isFetched]);
 
   const [send] = useWebsocket(`ws://${URL}`, {
     onOpen: useCallback(() => setLoading(false), []),

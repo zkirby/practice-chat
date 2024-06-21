@@ -20,5 +20,19 @@ services:
     ports:
       - "${REDIS_PORT}:${REDIS_PORT}"
 
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+      MONGO_INITDB_COLLECTION: ${MONGO_INITDB_COLLECTION}
+    ports:
+      - "${MONGO_PORT}:${MONGO_PORT}"
+    volumes:
+      - mongodbdata:/data/db
+
 volumes:
   postgres_data:
+  mongodbdata:

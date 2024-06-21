@@ -65,6 +65,7 @@ export default function Threads({ ids }: { ids: string[] }) {
               {usersQuery.data.users.map((u) => {
                 return (
                   <div
+                    key={u.id}
                     onClick={() => {
                       friendsMutation.mutate(u.id);
                       setOpen(false);
@@ -87,6 +88,7 @@ export default function Threads({ ids }: { ids: string[] }) {
             {filtered?.map((f: { name: string; id: string }) => {
               return (
                 <div
+                  key={f.id}
                   className={`threads__thread ${
                     ids.includes(`${f.id}`) ? "active" : ""
                   }`}

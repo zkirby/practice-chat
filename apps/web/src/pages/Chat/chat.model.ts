@@ -6,41 +6,46 @@ type MessageCache = { [userId: string]: { [contentId: string]: UIMessage } };
 
 interface ChatStore {
   cache: MessageCache;
-  add: (m: MessagePayload) => void;
   get: () => UIMessage[];
+  add: (m: MessagePayload) => void;
+  addBulk: (m: MessagePayload[]) => void;
 }
 
 export const useChatStore = create<ChatStore>((set, get) => ({
   cache: {},
 
-  /** Add a message to the message cache */
-  add: (m) => set((s) => ({ cache: insertMessage(m, s.cache) })),
-
   /** Get all the messages in the message cache */
   get: () => getMessages(get().cache),
+
+  /** Add a message to the message cache */
+  add: (m) => set((s) => ({ cache: insertMessages([m], s.cache) })),
+
+  /** bulk add messages */
+  addBulk: (m) => set((s) => ({ cache: insertMessages(m, s.cache) })),
 }));
 
 export const getMessages = (cache: MessageCache) =>
   Object.values(cache).flatMap((m) => Object.values(m));
 
-const insertMessage = (
-  message: MessagePayload,
+const insertMessages = (
+  messages: MessagePayload[],
   cache: MessageCache
 ): MessageCache => {
-  const { user, content, sentAt } = message;
-  let text = "";
+  const newCache = { ...cache };
 
-  if ("fragment" in content) {
-    const existing = cache[user.id]?.[content.id]?.text;
-    text = (existing ?? "") + content.fragment;
-  } else if ("text" in content) {
-    text = content.text;
-  }
+  messages.forEach((message) => {
+    const { user, content, sentAt } = message;
+    let text = "";
 
-  return {
-    ...cache,
-    [user.id]: {
-      ...(cache[user.id] ?? {}),
+    if ("fragment" in content) {
+      const existing = newCache[user.id]?.[content.id]?.text;
+      text = (existing ?? "") + content.fragment;
+    } else if ("text" in content) {
+      text = content.text;
+    }
+
+    newCache[user.id] = {
+      ...(newCache[user.id] ?? {}),
       [content.id]: {
         id: user.id,
         role: user.role,
@@ -48,6 +53,8 @@ const insertMessage = (
         sentAt,
         name: user.name,
       },
-    },
-  };
+    };
+  });
+
+  return newCache;
 };

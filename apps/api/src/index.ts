@@ -12,12 +12,14 @@ import { localLog } from "./middleware/localLog";
 
 import { Redis, close as closeRedis, init as initRedis } from "./infra/redis";
 import { Database, close as closeDB, init as initDB } from "./infra/database";
+import { Mongo, close as closeMongo, init as initMongo } from "./infra/mongo";
 
 const port = process.env.PORT || 5001;
 
 interface Services {
   redis: Redis;
   db: Database;
+  mongo: Mongo;
 }
 
 const initServer = (services: Services) => {
@@ -58,8 +60,9 @@ const initServer = (services: Services) => {
 async function start() {
   const redis = await initRedis();
   const database = await initDB();
+  const { db: mongo, client: mongoClient } = await initMongo();
 
-  initServer({ redis, db: database });
+  initServer({ redis, db: database, mongo });
 
   process.on("exit", async () => {
     console.log("[SERVER] Closing server");
@@ -69,6 +72,9 @@ async function start() {
 
     console.log("[SERVER] Closing database");
     await closeDB(database);
+
+    console.log("[SERVER] Closing mongo");
+    await closeMongo(mongoClient);
 
     console.log("[SERVER] Server is closed...");
     process.exit();

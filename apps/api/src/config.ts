@@ -14,4 +14,10 @@ export const config = {
     host: process.env.REDIS_HOST || "localhost",
     port: parseInt(process.env.REDIS_PORT || "6379", 10),
   },
+  mongo: {
+    user: process.env.MONGO_INITDB_ROOT_USERNAME,
+    password: process.env.MONGO_INITDB_ROOT_PASSWORD,
+    database: process.env.MONGO_INITDB_DATABASE,
+    port: parseInt(process.env.MONGO_PORT || "27017", 10),
+  },
 };

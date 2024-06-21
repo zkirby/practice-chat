@@ -16,13 +16,14 @@
   flex-direction: column;
   font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   white-space: pre-wrap;
+  overflow: hidden;
 
   & .mb-body__message-wrapper {
     padding: 0 60px;
     display: flex;
+    flex-grow: 1;
     flex-direction: column;
-    justify-content: end;
-    height: 100%;
+    justify-content: flex-end;
     overflow-y: auto;
     margin-bottom: 30px;
     row-gap: 5px;

@@ -2,14 +2,18 @@ import { Express } from "express";
 import { friends } from "./controllers/friends";
 import { Database } from "./infra/database";
 import { users } from "./controllers/users";
+import { threads } from "./controllers/threads";
+import { Mongo } from "./infra/mongo";
 
 export const attachPrivateRoutes = (
   app: Express,
-  services: { db: Database }
+  services: { db: Database; mongo: Mongo }
 ) => {
   app.get("/friends", friends.list(services));
   app.post("/friends", friends.add(services));
   app.get("/users", users.list(services));
+  app.get("/messages", threads.list(services));
+  app.post("/messages", threads.add(services));
 
   app.get("/me", (req, res) => {
     const { name, id } = req.currentUser;

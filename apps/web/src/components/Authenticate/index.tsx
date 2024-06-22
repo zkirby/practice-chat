@@ -50,7 +50,6 @@ export default function Authenticate({ children }: React.PropsWithChildren) {
   if (!loading && loggedIn) {
     return children;
   }
-
   return (
     <div className="auth-screen">
       {loading ? (

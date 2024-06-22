@@ -1,18 +1,14 @@
 ### TODO:
 
-Get threads working:
-
-- [ ] Threads + Mongo
-
-Deploy it up to the cloud:
-
 - [ ] Deploy to AWS cloud (possibly test on ngix as well)
   - load balancer
   - ec2 auto scale
   - Postgres RDS db
+  - also review everything that I'm supposed to know in theory lol.
 
 If time:
 
+- [ ] Add per-friend threading
 - [ ] Add offline support + optimistic updates
 
 **_ CLEAN UP AND STOP WORKING ON IT - move to the next thing _**

@@ -20,4 +20,7 @@ export const config = {
     database: process.env.MONGO_INITDB_DATABASE,
     port: parseInt(process.env.MONGO_PORT || "27017", 10),
   },
+  jwt: {
+    secret: process.env.SECRET_KEY,
+  },
 };

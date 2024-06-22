@@ -4,6 +4,8 @@ import { Database } from "./infra/database";
 import { users } from "./controllers/users";
 import { threads } from "./controllers/threads";
 import { Mongo } from "./infra/mongo";
+import jwt from "jsonwebtoken";
+import { config } from "./config";
 
 export const attachPrivateRoutes = (
   app: Express,
@@ -42,12 +44,8 @@ export const attachPublicRoutes = (
     }
 
     const user = userResp.rows[0];
-    res.cookie("chat-user-token", user.id, {
-      maxAge: 900000,
-      httpOnly: true,
-      secure: false,
-      sameSite: "lax",
-    });
-    res.status(200).send({ user });
+    res
+      .status(200)
+      .send({ token: jwt.sign({ userId: user.id }, config.jwt.secret!) });
   });
 };

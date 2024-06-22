@@ -9,17 +9,17 @@ export default function Threads({ ids }: { ids: string[] }) {
   const friendsQuery = useQuery({
     queryKey: ["/friends"],
     queryFn: () =>
-      fetch(`http://${URL}/friends`, { credentials: "include" }).then((res) =>
-        res.json()
-      ),
+      fetch(`http://${URL}/friends`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      }).then((res) => res.json()),
   });
   const friendsMutation = useMutation({
     mutationFn: (id) =>
       fetch(`http://${URL}/friends`, {
-        credentials: "include",
         method: "POST",
         headers: {
           "content-type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({ id }),
       }).then(() => friendsQuery.refetch()),
@@ -27,9 +27,9 @@ export default function Threads({ ids }: { ids: string[] }) {
   const usersQuery = useQuery({
     queryKey: ["/users"],
     queryFn: () =>
-      fetch(`http://${URL}/users`, { credentials: "include" }).then((res) =>
-        res.json()
-      ),
+      fetch(`http://${URL}/users`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      }).then((res) => res.json()),
   });
 
   const [term, setTerm] = useState("");

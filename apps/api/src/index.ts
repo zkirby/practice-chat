@@ -28,20 +28,17 @@ const initServer = (services: Services) => {
     cors({
       origin: [
         "http://localhost:5173",
-        "http://localhost:5174",
-        "http://localhost:5175",
-        "http://localhost:5176",
-        "http://localhost:5177",
+        "https://practice-chat.s3-website-us-east-1.amazonaws.com",
       ],
-      credentials: true,
     })
   );
   app.use(express.json());
-  app.use(cookieParser());
+  // app.use(cookieParser());
 
   app.use(localLog);
 
   attachPublicRoutes(app, services);
+  app.get("/healthz", (req, res) => res.status(200).send({ success: true }));
 
   const server = http.createServer(app);
   const wss = new WebSocketServer({ noServer: true });
@@ -50,8 +47,6 @@ const initServer = (services: Services) => {
   attachSSE(app);
 
   attachAuth(app, services);
-  app.get("/healthz", (req, res) => res.status(200).send({ success: true }));
-
   attachPrivateRoutes(app, services);
 
   server.listen(port, () => console.log("### Server is up and running ###"));

@@ -1,11 +1,23 @@
 import { useEffect, useState } from "react";
 import { useUser } from "./authenticate.model";
 import { URL } from "@/strings";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 import "./authenticate.css";
 
 export default function Authenticate({ children }: React.PropsWithChildren) {
+  const { set } = useUser((u) => ({ user: u.user, set: u.set }));
+
+  const userQuery = useQuery({
+    retry: false,
+    queryKey: ["/me"],
+    queryFn: () =>
+      fetch(`http://${URL}/me`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }).then((r) => r.json()),
+  });
   const userMutation = useMutation({
     mutationFn: (user: { username: string; password: string }) =>
       fetch(`http://${URL}/users`, {
@@ -13,39 +25,31 @@ export default function Authenticate({ children }: React.PropsWithChildren) {
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "include",
         body: JSON.stringify({
           username: user.username,
           password: user.password,
         }),
+      }).then(async (r) => {
+        const { token } = await r.json();
+        localStorage.setItem("token", token);
+        userQuery.refetch();
       }),
   });
 
-  const { set } = useUser((u) => ({ user: u.user, set: u.set }));
-
-  const [authLoading, setLoading] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
     async function auth() {
-      setLoading(true);
-      try {
-        const resp = await fetch(`http://${URL}/me`, {
-          credentials: "include",
-        });
-        const { user } = await resp.json();
+      if (userQuery.isSuccess) {
+        const { user } = userQuery.data as any;
         set(user);
         setLoggedIn(true);
-      } catch {
-        setLoggedIn(false);
       }
-      setLoading(false);
     }
-
     auth();
-  }, []);
+  }, [userQuery.isSuccess]);
 
-  const loading = authLoading || userMutation.isPending;
+  const loading = userQuery.isPending || userMutation.isPending;
 
   if (!loading && loggedIn) {
     return children;

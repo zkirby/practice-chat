@@ -17,9 +17,9 @@ export default function Chat() {
   const messagesQuery = useQuery({
     queryKey: ["/messages"],
     queryFn: () =>
-      fetch(`http://${URL}/messages`, { credentials: "include" }).then((res) =>
-        res.json()
-      ),
+      fetch(`http://${URL}/messages`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      }).then((res) => res.json()),
   });
 
   const [loading, setLoading] = useState(true);

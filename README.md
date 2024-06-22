@@ -1,11 +1,5 @@
 ### TODO:
 
-- [ ] Deploy to AWS cloud (possibly test on ngix as well)
-  - load balancer
-  - ec2 auto scale
-  - Postgres RDS db
-  - also review everything that I'm supposed to know in theory lol.
-
 If time:
 
 - [ ] Add per-friend threading
